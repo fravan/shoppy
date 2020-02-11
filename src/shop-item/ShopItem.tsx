@@ -1,11 +1,6 @@
 import React from 'react'
-import {StyleSheet, Text, TouchableOpacity} from 'react-native'
-
-export interface IShopItem {
-  name: string
-  quantity: number
-  price: number
-}
+import {StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native'
+import {Item} from '../model'
 
 const styles = StyleSheet.create({
   button: {
@@ -42,21 +37,23 @@ const styles = StyleSheet.create({
 interface Props {
   onPress: () => void
   onLongPress: () => void
-  item: IShopItem
+  item: Item
 }
 
 const Component: React.FC<Props> = ({item, onPress, onLongPress}) => {
   return (
-    <TouchableOpacity
+    <TouchableNativeFeedback
       onPress={onPress}
-      style={styles.button}
+      background={TouchableNativeFeedback.SelectableBackground()}
       onLongPress={onLongPress}>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.price}>{item.price.toFixed(2)}€</Text>
-      {item.quantity > 0 ? (
-        <Text style={styles.quantity}>{item.quantity}</Text>
-      ) : null}
-    </TouchableOpacity>
+      <View style={styles.button}>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.price}>{(item.price || 0).toFixed(2)}€</Text>
+        {item.quantity > 0 ? (
+          <Text style={styles.quantity}>{item.quantity}</Text>
+        ) : null}
+      </View>
+    </TouchableNativeFeedback>
   )
 }
 

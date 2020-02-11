@@ -1,4 +1,3 @@
-import produce from 'immer'
 import React from 'react'
 import {
   SafeAreaView,
@@ -8,76 +7,43 @@ import {
   Text,
   Button,
 } from 'react-native'
-import ShopItem, {IShopItem} from '../shop-item/ShopItem'
-
-interface IState {
-  total: number
-  items: IShopItem[]
-}
-
-const registryInitialState: IState = {
-  total: 0,
-  items: [
-    {name: 'Complet', quantity: 0, price: 2.5},
-    {name: 'Campagne', quantity: 0, price: 2.5},
-    {name: 'Intégral', quantity: 0, price: 2.5},
-    {name: 'Brioche', quantity: 0, price: 5.4},
-    {name: 'Pain au chocolat', quantity: 0, price: 1.2},
-    {name: 'Croissant', quantity: 0, price: 1.1},
-  ],
-}
-type Reducer = (state: IState, action: any) => IState
-const registryReducer: Reducer = produce((state: IState, action: any) => {
-  switch (action.type) {
-    case 'Increment': {
-      const item = state.items.find(i => i.name === action.name)!
-      item.quantity += 1
-      break
-    }
-    case 'Reset': {
-      const item = state.items.find(i => i.name === action.name)!
-      item.quantity = 0
-      break
-    }
-    case 'Clear': {
-      return registryInitialState
-    }
-  }
-  state.total = state.items.reduce((acc, item) => {
-    acc += item.quantity * item.price
-    return acc
-  }, 0)
-}, registryInitialState)
-
-const RegistryContext = React.createContext<React.Dispatch<IState>>(() => {})
+import ShopItem from '../shop-item/ShopItem'
+import {useItems, Item} from '../model'
+import {useShopOrdersContext} from '../shop-order'
 
 const MainMenu = () => {
-  const [state, dispatch] = React.useReducer(
-    registryReducer,
-    registryInitialState,
-  )
+  const [items, itemsActions] = useItems()
+  const [_orders, ordersActions] = useShopOrdersContext()
+
+  React.useEffect(() => {
+    ordersActions.load()
+  }, [])
+
+  const validateOrder = async () => {
+    await ordersActions.add(items)
+    itemsActions.clear()
+  }
+
   return (
     <SafeAreaView style={styles.area}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={styles.scrollView}>
-        <RegistryContext.Provider value={dispatch}>
-          <View style={styles.container}>
-            {state.items.map((item: IShopItem) => (
-              <ShopItem
-                key={item.name}
-                item={item}
-                onLongPress={() => dispatch({type: 'Reset', name: item.name})}
-                onPress={() => dispatch({type: 'Increment', name: item.name})}
-              />
-            ))}
-          </View>
-        </RegistryContext.Provider>
+        <View style={styles.container}>
+          {items.items.map((item: Item) => (
+            <ShopItem
+              key={item.name}
+              item={item}
+              onLongPress={() => itemsActions.reset(item.name)}
+              onPress={() => itemsActions.increment(item.name)}
+            />
+          ))}
+        </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <Text style={styles.price}>Total TTC: {state.total.toFixed(2)}€</Text>
-        <Button title="Effacer" onPress={() => dispatch({type: 'Clear'})} />
+        <Text style={styles.price}>Total TTC: {items.total.toFixed(2)}€</Text>
+        <Button title="Valider" onPress={() => validateOrder()} />
       </View>
     </SafeAreaView>
   )
