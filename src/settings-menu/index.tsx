@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const SettingsMenu = () => {
+const SettingsMenu = ({navigation}) => {
   const [orders, actions] = useShopOrdersContext()
 
   return (
@@ -43,6 +43,8 @@ const SettingsMenu = () => {
       </ScrollView>
 
       <View style={styles.footer}>
+        <Button title="Retour" onPress={() => navigation.goBack()} />
+        <View style={{flex: 1}} />
         <Button title="Tout effacer" onPress={() => actions.clear()} />
       </View>
     </SafeAreaView>

@@ -11,7 +11,7 @@ import ShopItem from '../shop-item/ShopItem'
 import {useItems, Item} from '../model'
 import {useShopOrdersContext} from '../shop-order'
 
-const MainMenu = () => {
+const MainMenu = ({navigation}) => {
   const [items, itemsActions] = useItems()
   const [_orders, ordersActions] = useShopOrdersContext()
 
@@ -42,7 +42,13 @@ const MainMenu = () => {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Text style={styles.price}>Total TTC: {items.total.toFixed(2)}€</Text>
+        <Button
+          title="Commandes"
+          onPress={() => navigation.navigate('Settings')}
+        />
+        <Text style={styles.price} onLongPress={() => itemsActions.clear()}>
+          Total: {items.total.toFixed(2)}€
+        </Text>
         <Button title="Valider" onPress={() => validateOrder()} />
       </View>
     </SafeAreaView>
@@ -65,6 +71,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 8,
     flex: 1,
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   container: {
     flex: 1,
