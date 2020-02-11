@@ -1,19 +1,13 @@
 import React from 'react'
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Button,
-} from 'react-native'
+import {SafeAreaView, StyleSheet, ScrollView, View, Text} from 'react-native'
 import ShopItem from '../shop-item/ShopItem'
 import {useItems, Item} from '../model'
 import {useShopOrdersContext} from '../shop-order'
+import Button from '../components/Button'
 
 const MainMenu = ({navigation}) => {
   const [items, itemsActions] = useItems()
-  const [_orders, ordersActions] = useShopOrdersContext()
+  const [orders, ordersActions] = useShopOrdersContext()
 
   React.useEffect(() => {
     ordersActions.load()
@@ -42,14 +36,19 @@ const MainMenu = ({navigation}) => {
       </ScrollView>
 
       <View style={styles.footer}>
+        {/* title="Commandes" */}
         <Button
-          title="Commandes"
-          onPress={() => navigation.navigate('Settings')}
-        />
+          disabled={orders.length === 0}
+          onPress={() => navigation.navigate('Settings')}>
+          <Text style={styles.button}>Commandes</Text>
+        </Button>
         <Text style={styles.price} onLongPress={() => itemsActions.clear()}>
           Total: {items.total.toFixed(2)}€
         </Text>
-        <Button title="Valider" onPress={() => validateOrder()} />
+        {/* title="Valider" */}
+        <Button disabled={items.total <= 0} onPress={() => validateOrder()}>
+          <Text style={styles.button}>Valider</Text>
+        </Button>
       </View>
     </SafeAreaView>
   )
@@ -61,11 +60,16 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   footer: {
     backgroundColor: 'orange',
     flexDirection: 'row',
+    fontSize: 22,
+  },
+  button: {
+    color: 'white',
+    fontSize: 22,
   },
   price: {
     fontWeight: 'bold',
@@ -73,15 +77,15 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     textTransform: 'uppercase',
+    fontSize: 22,
   },
   container: {
     flex: 1,
     margin: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: 'black',
     flexWrap: 'wrap',
-    alignItems: 'stretch',
   },
 })
 

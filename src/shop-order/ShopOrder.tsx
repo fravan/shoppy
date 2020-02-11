@@ -13,23 +13,28 @@ const styles = StyleSheet.create({
   },
   order: {
     fontWeight: 'bold',
+    fontSize: 22,
+    color: 'white',
   },
   date: {
     fontStyle: 'italic',
-    fontSize: 10,
+    fontSize: 22,
+    color: 'white',
   },
   itemContainer: {
     flexDirection: 'row',
   },
   item: {
     paddingRight: 4,
+    fontSize: 22,
+    color: 'white',
   },
   total: {
     borderTopColor: 'orange',
     borderTopWidth: 1,
     textAlign: 'right',
     color: 'orange',
-    fontSize: 16,
+    fontSize: 22,
   },
 })
 

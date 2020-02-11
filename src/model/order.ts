@@ -67,13 +67,17 @@ export function useOrders() {
 
   const add = async (order: Pick<Order, 'items' | 'total'>) => {
     const id = await UUIDGenerator.getRandomUUID()
+    const items = order.items.filter(i => i.quantity > 0)
+    if (items.length === 0) {
+      return
+    }
     dispatch({
       type: 'Add',
       order: {
         id,
+        items,
         date: new Date().toISOString(),
         total: order.total,
-        items: order.items.filter(i => i.quantity > 0),
       },
     })
   }
